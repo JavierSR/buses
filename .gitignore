@@ -1,6 +1,6 @@
 # OSX
 #
-.DS_Store
+buses-app/.DS_Store
 
 # Xcode
 #
@@ -20,7 +20,6 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-xcshareddata
 
 # Android/IntelliJ
 #
@@ -32,10 +31,13 @@ local.properties
 
 # node.js
 #
-node_modules/
-npm-debug.log
-yarn-error.log
+buses-app/node_modules/
+buses-app/npm-debug.log
+buses-app/yarn-error.log
 
+buses-backend/node_modules/
+buses-backend/npm-debug.log
+buses-backend/yarn-error.log
 # BUCK
 buck-out/
 \.buckd/
