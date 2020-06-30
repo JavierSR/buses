@@ -132,9 +132,9 @@ module.exports = {
         })
     },
     addFav: (userData, response) => {
-
+        console.log('userData', userData)
     },
     addHistory: (userData, response) => {
-
+        console.log('userData', userData)
     }
 }

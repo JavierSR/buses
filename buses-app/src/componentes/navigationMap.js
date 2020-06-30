@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {TouchableOpacity, Text, View, StyleSheet, Alert} from 'react-native'
+import {TouchableOpacity, Text, View, StyleSheet} from 'react-native'
 import MapView, { PROVIDER_GOOGLE, Polyline } from 'react-native-maps'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import globalFn from './../global'
@@ -80,34 +80,108 @@ const styles = StyleSheet.create({
 
 export default class extends Component {
     selectLocation = () => {
-        this.setState({pressReady: true})
+        this.setState({pressReady: true, showRoute: false})
         globalFn.showAlert({text: 'Toque una parte del mapa para elegir destino'})
     }
     renderRoute = () => {
-        if(!this.state.destination) return
-        return (
-            <Polyline>
+        if(!(this.state.destination) || !(this.state.showRoute)) return
+        console.log('rutas', this.state.routes)
+        const selectedRoute = this.state.routes[0],
+                routeText   = `${selectedRoute.recorrido}\nTiempo estimado: 5 minutos\nSiga las instrucciones del mapa para llegar`
+                globalFn.showAlert({title: 'RUTA SUGERIDA', text: routeText})
 
-            </Polyline>
+        const points = {
+            lat  : selectedRoute.lat.split(';'),
+            long : selectedRoute.long.split(';')
+        } 
+
+        if(points.lat.length !== points.long.length) {
+            console.log('La ruta no posee la misma cantidad de coordenadas para latitud y longitud.')
+            return 
+        }
+        
+        let coordinates = []
+        for(let i = 0; i < points.lat.length; i++) {
+            coordinates = [...coordinates, {
+                latitude  : parseFloat(points.lat[i]),
+                longitude : parseFloat(points.long[i])
+            }]
+        }
+        
+        const getDistance = (point) => {
+            return (Math.pow(point.latitude, 2) + Math.pow(point.longitude, 2))
+        }
+
+        const destinationDistance = getDistance(this.state.destination)
+        const walkPoint = coordinates.reduce((a, b) => {
+            return Math.abs(getDistance(b) - destinationDistance) < Math.abs(getDistance(a) - destinationDistance) ? b : a;
+        })
+
+        try {
+            if(this.props.route) {
+                if(this.props.route.params) {
+                    globalFn.request({
+                        url      : globalFn.localhost + 'history',
+                        method   : 'POST',
+                        body     : {...this.state.destination, ...selectedRoute, idUser: this.route.params.id},
+                        callback : (response) => {
+                            console.log('response', response)
+                        }
+                    })
+                }
+            }
+        }
+        catch(err) {
+            console.log('err', err)
+        }
+
+        return (
+            <View>
+                <Polyline 
+                    coordinates={coordinates} 
+                    strokeColor={'blue'} 
+                    strokeWidth={1.5} 
+                    lineCap={'round'} 
+                    lineJoin='round'>
+                </Polyline>
+                <Polyline 
+                    coordinates={[
+                        {latitude: this.state.destination.latitude, longitude: this.state.destination.longitude},
+                        {latitude: walkPoint.latitude, longitude: walkPoint.longitude}
+                    ]}
+                    strokeColor={'red'}>
+                </Polyline>
+                <Polyline 
+                    coordinates={[
+                        {latitude: 4.158006, longitude: -73.636731},
+                        {latitude: coordinates[4].latitude, longitude: coordinates[4].longitude}
+                    ]}
+                    strokeColor={'black'}>
+                </Polyline>
+            </View>
         )
     }
     renderDestination = () => {
         if(!this.state.destination) return
-        console.log(this.state.destination)
+        console.log('destino', this.state.destination)
         return (
             <MapView.Marker
                 coordinate={{ latitude: this.state.destination.latitude, longitude: this.state.destination.longitude }}
+                title     ={'Destino'}
             />
         )
     }
     state = {
         destination : false,
         pressReady  : false,
-        routes      : []
+        showRoute   : false,
+        routes      : [],
+        userLat     : 0,
+        userLong    : 0
     }
     componentDidMount() {
         globalFn.request({
-            url      : 'http://192.168.1.4:3100/routes',
+            url      : globalFn.localhost + 'routes',
             method   : 'GET',
             callback : (response) => {
                 if(!response.success) {
@@ -123,7 +197,8 @@ export default class extends Component {
         Geolocation.getCurrentPosition(
             (position) => {
                 console.log(position)
-                this.setState({userLocation: position})
+                this.setState({userLat: position.coords.latitude})
+                this.setState({userLong: position.coords.longitude})
             },
             (error) => {
                 console.log(error)
@@ -133,6 +208,10 @@ export default class extends Component {
         )
     }
     render() {
+        const currentLocation = {
+            latitude : this.state.userLat,
+            longitude: this.state.userLong
+        }
         return(
             <View style={styles.container}>
                 <View style={styles.title}>
@@ -164,9 +243,7 @@ export default class extends Component {
                                     globalFn.showAlert({text: 'Seleccione primero un destino'})
                                     return
                                 }
-                                setTimeout(() => {
-                                    Alert.alert('No se puede conectar con el servidor', `Destino ${this.state.destination.longitude}, ${this.state.destination.latitude}`)
-                                }, 2500)
+                                this.setState({showRoute: true})
                             }}
                         >
                             <Text style={styles.generateText}>Generar ruta</Text>
@@ -187,13 +264,18 @@ export default class extends Component {
                         region   = {{
                             latitude: 4.15,
                             longitude: -73.633,
-                            latitudeDelta: 0.015,
-                            longitudeDelta: 0.0121,
+                            latitudeDelta: 0.055,
+                            longitudeDelta: 0.0521,
                         }}
                     >
-                    {this.renderRoute()}
-                    {this.renderDestination()}
-                    </MapView>
+                        <MapView.Marker
+                            coordinate = {currentLocation}
+                            pinColor   = {'blue'}
+                            title      = 'Ubicación actual'
+                        />
+                        {this.renderDestination()}
+                        {this.renderRoute()}
+                        </MapView>
                 </View>
             </View>
         )

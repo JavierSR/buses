@@ -68,7 +68,7 @@ export default class Register extends Component {
         }
 
         globalFn.request({
-            url      : 'http://192.168.1.4:3100/register',
+            url      : globalFn.localhost + 'register',
             method   : 'POST',
             body     : values,
             callback : (response) => {

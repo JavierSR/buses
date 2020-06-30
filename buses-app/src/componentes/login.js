@@ -3,7 +3,7 @@ import { View, TouchableOpacity, StyleSheet, Text, Alert } from 'react-native'
 import { Formik } from 'formik'
 import { TextInput } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import globalFn from './../global'
+import globalFn from './../global.js'
 
 const BLUE   = '#1563ea',
     styles  = StyleSheet.create({
@@ -56,7 +56,7 @@ export default class Login extends Component {
         }
 
         globalFn.request({
-            url      : 'http://192.168.1.4:3100/login',
+            url      : globalFn.localhost + 'login',
             method   : 'POST',
             body     : values,
             callback : (response) => {
