@@ -55,17 +55,19 @@ CREATE TABLE `rutas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `recorrido` text DEFAULT NULL,
   `latitudInicio` varchar(100) NOT NULL,
-  `latitutdFin` varchar(100) NOT NULL,
+  `latitudFin` varchar(100) NOT NULL,
   `longitudInicio` varchar(100) NOT NULL,
   `longitudFin` varchar(100) NOT NULL,
+  `lat` text DEFAULT NULL,
+  `long` text DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `rutas` */
 
-insert  into `rutas`(`id`,`recorrido`,`latitudInicio`,`latitutdFin`,`longitudInicio`,`longitudFin`) values 
-(1,'SUPERGAS - HOSPITAL','4.1630086','4.1448599','-73.6632501','-73.6436747'),
-(2,'CHARRASCAL - HOSPITAL','4.085520','4.1448599','-73.657001','-73.6436747');
+insert  into `rutas`(`id`,`recorrido`,`latitudInicio`,`latitudFin`,`longitudInicio`,`longitudFin`,`lat`,`long`) values 
+(1,'SUPERGAS - HOSPITAL','4.1630086','4.1448599','-73.6632501','-73.6436747','4.1630086;4.155561;4.157408;4.158914;4.157745;4.154628;4.151539;4.148834;4.144822','-73.6632501;-73.659586;-73.650441;-73.648484;-73.638600;-73.635808;-73.640781;-73.639798;-73.643641'),
+(2,'CHARRASCAL - HOSPITAL','4.085520','4.1448599','-73.657001','-73.6436747',NULL,NULL);
 
 /*Table structure for table `usuarios` */
 
@@ -78,12 +80,15 @@ CREATE TABLE `usuarios` (
   `correo` varchar(255) NOT NULL,
   `contrasena` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `usuarios` */
 
 insert  into `usuarios`(`id`,`nombres`,`apellidos`,`correo`,`contrasena`) values 
-(2,'Oscar','Sandoval','correo@ejemplo.com','202cb962ac59075b964b07152d234b70');
+(2,'Oscar','Sandoval','correo@ejemplo.com','202cb962ac59075b964b07152d234b70'),
+(3,'Oscar','Sdoval','correo2@ejemplo.com','698d51a19d8a121ce581499d7b701668'),
+(4,'Demostracion','Uniminuto','correo3@ejemplo.com','698d51a19d8a121ce581499d7b701668'),
+(5,'SOFI ','Prueba','correo123@ejemplo.com','202cb962ac59075b964b07152d234b70');
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
