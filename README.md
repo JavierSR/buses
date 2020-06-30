@@ -14,7 +14,7 @@ Esta aplicación creada en React Native usa la ubicación del usuario y un desti
  - Node + Express
  - MySQL
 
-##Requisitos para ejecución
+## Requisitos para ejecución
   - Version reciente de NodeJs (12 en adelante)
   - Tener instalado ambiente de desarrollo React Native: https://reactnative.dev/docs/environment-setup
   - Emulador de Android o adb disponible
